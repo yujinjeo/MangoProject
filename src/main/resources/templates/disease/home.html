@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mango diagnosis</title>
+</head>
+<body>
+  <div id="content" style="text-align:center;">
+    <h1 style="padding-bottom:1em; boarder-bottom: solid 1px black;">망고 잎 검사</h1>
+    <span id="upload-image"
+          style="display:inline-block; height:100; width:200; padding:2em; border-right:solid 1px black;">
+        <form action="/api/disease/diagnosis" method="post"
+              enctype="multipart/form-data">
+          <input id="mango-image" name="mangoImage" type="file"
+                 placeholder="망고 잎 이미지를 업로드하세요!" onchange="preDisplay()">
+          <br>
+          <input name="location" type="text" placeholder="망고 위치를 작성해보세요">
+          <button type="submit">진단하기</button>
+        </form>
+    </span>
+    <span id="image-predisplay" style="padding:2em;">
+      <img id="preview" alt="사진 미리보기" style="max-width:100%; max-height:300px;"/>
+    </span>
+  </div>
+
+  <script src="../js/disease.js"></script>
+</body>
+</html>

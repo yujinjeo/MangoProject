@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>modify</title>
+</head>
+<body>
+<h1>회원정보 수정 화면입니다.</h1>
+<form action="/api/user/modify" method="post">
+    name : <input type="text" name="name" th:placeholder="${name}"/><br/>
+    nickname : <input type="text" name="nickname" th:placeholder="${nickname}"/><br/>
+    username : <input type="text" name="username" th:placeholder="${username}"/><br/>
+<!--    password : <input type="password" name="password" th:placeholder="${password}"/><br/>-->
+    email : <input type="text" name="email" th:placeholder="${email}"/><br/>
+    <button type="submit">수정하기</button>
+</form>
+
+<a href="/user/logout">로그아웃</a>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+로그인 페이지입니다.
+<!--<form action="/login" method="post">-->
+<form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" placeholder="Username"/><br/>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Password"/><br/>
+    <button type="button" onclick="loginFunction()">로그인</button>
+</form>
+
+<div id="tempContainer" style="visibility: hidden;"></div>
+
+<script>
+    function loginFunction(){
+        var formData=$("#loginForm").serialize();
+
+        $.ajax({
+            type:"POST",
+            url:"/api/user/login",
+            enctype:'multipart/form-data',
+            data:formData,
+            success:function(data,textStatus,jqXHR){
+                console.log(data);
+                var token=jqXHR.getResponseHeader("Authorization");
+                localStorage.setItem("token",token);
+                goAdmin();
+            },
+            error: function(xhr, status,error){
+                console.error("Ajax failed:",status, error);
+                alert("다시 로그인해주십시오.");
+            }
+        });
+    }
+
+    function goAdmin(){
+        var token=localStorage.getItem("token");
+
+        //동적으로 폼 생성
+        var form=document.createElement("form");
+        form.setAttribute("method","post");
+        form.setAttribute("action","/modify");
+
+        //input 태그 생성 후 form에 넣기
+        var input=document.createElement("input");
+        input.setAttribute("type","text");
+        input.setAttribute("name","token");
+        input.setAttribute("value",token);
+        form.appendChild(input);
+
+        document.getElementById("tempContainer").appendChild(form);
+        form.submit();
+    }
+</script>
+</body>
+</html>

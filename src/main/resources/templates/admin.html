@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+</head>
+<body>
+안녕하세요, <span th:text="${nickname}"></span>님!
+admin 페이지입니다~!
+<button onclick="logout()">로그아웃</button>
+
+<script>
+    function logout(){
+        window.location.href='/logout';
+    }
+</script>
+</body>
+</html>
