@@ -1,0 +1,64 @@
+from flask import Flask, request
+import time
+import tensorflow as tf
+import urllib.request
+import tempfile
+import os
+#boto3는 python AWS SDK이다.
+import boto3
+from PIL import Image
+from botocore.exceptions import NoCredentialsError
+import numpy as np
+
+app=Flask(__name__)
+
+resultList=['Anthracnose', 'Bacterial Canker', 'Cutting Weevil', 'Die Back', 'Gall Midge', 'Healthy', 'Powdery Mildew', 'Sooty Mould']
+
+@app.route("/first",methods=['POST'])
+def first():
+    try:
+        #json 요청으로부터 s3url 얻기
+        data=request.get_json()
+        s3url=data.get('s3url')
+        key=list(map(str,s3url.split("/")))[3]
+
+        #model 가져오기
+        model=tf.keras.models.load_model("C:/Users/yujin/Downloads/resnet50_Test.h5")
+
+        #세션 셜정
+        session=boto3.Session(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            region_name=region_name
+        )
+
+        # s3 버킷에서 이미지 가져오기
+        s3=session.resource('s3')
+        object=s3.Object(bucket_name,key).get()
+        file_stream=object['Body']
+        img=Image.open(file_stream)
+        img=img.resize((224,224))
+
+        # 이미지를 모델에서 쓸 수 있도록 array로 변환하기
+        img_array=np.array(img)
+        img_array=np.expand_dims(img_array,axis=0)
+
+
+        # 머신러닝 추론 수행
+        prediction=model.predict(img_array)
+        resultSet=np.array(prediction)
+
+        # 가장 높은 확률을 가진 top3 질병 리스트화하여 리턴하기
+        set=np.argsort(resultSet[0])[::-1]
+        top3=set[:3]
+        result=[]
+        for idx in top3:
+            result.append(resultList[idx])
+
+        return result
+    except Exception as e:
+        return "error"
+
+
+if __name__=="__main__":
+    app.run(port=8081)
